@@ -73,7 +73,7 @@ namespace NoahMP
 	/// </summary>
 	public class RiverRouting
 	{
-		public static int threads = 6;
+		public static int threads = 4;
 		/// <summary>
 		/// wave celerity, unit:km/h
 		/// </summary>

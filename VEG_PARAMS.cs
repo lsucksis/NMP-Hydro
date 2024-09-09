@@ -87,6 +87,7 @@ namespace NoahMP
 		/// <summary>
 		/// photosynthetic pathway: 0. = c4, 1. = c3
 		/// </summary>
+			
 		public double[] C3PSN = new double[MVT];
 		/// <summary>
 		/// co2 michaelis-menten constant at 25c (pa)

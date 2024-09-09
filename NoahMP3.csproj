@@ -51,11 +51,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Driver.cs" />
+    <Compile Include="FortArray.cs" />
     <Compile Include="Glacier.cs" />
-    <Compile Include="GridCellReal.cs" />
-    <Compile Include="NoahMP3.cs" />
+    <Compile Include="GridCell.cs" />
+    <Compile Include="RAD_PARAMS.cs" />
+    <Compile Include="REDPRM.cs" />
+    <Compile Include="RiverRouting.cs" />
+    <Compile Include="SFCDIF1.cs" />
+    <Compile Include="SFCDIF2.cs" />
+    <Compile Include="SFCDIF3.cs" />
+    <Compile Include="SFCDIF4.cs" />
+    <Compile Include="WATER_Input.cs" />
+    <Compile Include="ENERGY_Input.cs" />
+    <Compile Include="NoahMP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VEG_PARAMS.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -64,10 +77,6 @@
     <ProjectReference Include="..\..\NetCDF\NetCDF\NetCDF.csproj">
       <Project>{a9950623-4256-4f49-8f8d-d9a9feabf525}</Project>
       <Name>NetCDF</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NoahMP_Drv\NoahMP_Drv.csproj">
-      <Project>{8534340e-05cd-4ac7-a4c2-004669a1415d}</Project>
-      <Name>NoahMP_Drv</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

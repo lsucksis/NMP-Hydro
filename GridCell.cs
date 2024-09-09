@@ -14,9 +14,8 @@ namespace NoahMP
 	/// <summary>
 	/// Description of NoahMP_Cell.
 	/// </summary>
-	public abstract class GridCell
+	public class GridCell
 	{
-		public static NoahMP NoahMP;
 		public	int ILOC;
 		public int JLOC;
 		public double LATITUDE;
@@ -572,7 +571,7 @@ namespace NoahMP
 		
 		public double sumPcp;
 		public		double sumEvap;
-		public		double sumRunoff;
+		public		double sumRunoff;	
 				
 		public double QFX {
 			get {
@@ -675,7 +674,7 @@ namespace NoahMP
 		public double SLOPE {
 			get {
 				//return 0.1;
-				return REDPRM.SLOPE_DATA[this.SLOPETYP - 1];
+				return REDPRM.SLOPE_DATA[this.SLOPETYP-1];
 			}
 		}
 		
@@ -703,68 +702,56 @@ namespace NoahMP
 		/// 刘永和自己加的，用于调试
 		/// </summary>
 		double preValue = -1e20;
+		/// <summary>
+		/// 刘永和自己加的，用于调试
+		/// </summary>
+		int ncount=0;
 		public void CheckModel()
 		{
 //			if(preValue>0.01 && this.FVEG<1e-15){
 //				throw new Exception("FVEG become very zero:"+this.FVEG);
 //			}
 //			preValue=this.FVEG;
-		}
+		}				
 		
 
-		public static int getYearLen(int year)
+		public void	SurfaceFlux()
 		{
-			if (year % 400 == 0) {
-				return 366;
-			}
-			if (year % 100 == 0) {
-				return 365;
-			}
-			if (year % 4 == 0)
-				return 366;
+			double COSZ = Driver.CALC_DECLIN(Driver.time0, this.LATITUDE, this.LONGITUDE);
+			int YEARLEN = NoahMP.getYearLen(Driver.time0.Year);
+//			if(TG<100)
+//				throw new Exception("");
+//			if(this.SHDMAX>1 || this.SHDMAX<0.01 || this.SHDMIN>1)
+//				throw new Exception("");
+			NoahMP.NoahMP_SFLX(this, -1, -1, this.LATITUDE, YEARLEN, -1, COSZ,
+				Driver.DT, Driver.DX, DZ8W, Driver.NSoil, ZSOIL, Driver.NSnow,
+				FVEG, SHDMAX, VEGTYP, Driver.vegparams.ISURBAN, ICE, IST,
+				ISC, SMCEQ,
+				IZ0TLND, SFCTMP, SFCPRS, PSFC, UU, VV, Q2,
+				QC, SOLDN, LWDN, PRCP, TBOT, CO2AIR,
+				O2AIR, FOLN, FICEOLD, PBLH, ZLVL,
+				ref ALBOLD,ref SNEQVO,
+				STC, SH2O, SMC,ref TAH,ref EAH,ref FWET,
+				ref CANLIQ, ref CANICE, ref TV, ref TG, ref QSFC,ref QSNOW,
+				ref ISNOW, ZSNSO, ref SNOWH,ref SNEQV, SNICE, SNLIQ,
+				ref ZWT, ref WA, ref WT, ref WSLAKE, ref LFMASS, ref RTMASS,
+				ref STMASS, ref WOOD, ref STBLCP, ref FASTCP, ref LAI, ref SAI,
+				ref CM, ref CH, ref TAUSS,
+				ref SMCWTD, ref DEEPRECH, ref RECH,
+				out FSA, out FSR, out FIRA, out FSH, out SSOIL, out FCEV,
+				out FGEV, out FCTR, out ECAN, out ETRAN, out EDIR, out TRAD,
+				out TGB, out TGV, out T2MV, out T2MB, out Q2V, out Q2B,
+				out RUNSRF, out RUNSUB, out APAR, out PSN, out SAV, out SAG,
+				out FSNO, out NEE, out GPP, out NPP, out FVEGMP, out ALBEDO,
+				out QSNBOT, out PONDING, out PONDING1, out PONDING2, out RSSUN, out RSSHA,
+				out BGAP, out WGAP, out CHV, out CHB, out EMISSI,
+				out SHG, out SHC, out SHB, out EVG, out EVB, out GHV,
+				out GHB, out IRG, out IRC, out IRB, out TR, out EVC,
+				out  CHLEAF, out CHUC, out CHV2, out CHB2, out FPICE,
+				ref  SFCHEADRT);
+//			Console.WriteLine(ALBEDO);
 			
-			return 365;
 		}
-		
-		
-		
-		public abstract void	SurfaceFlux();
-//		{
-//			double COSZ = Driver.CALC_DECLIN(Driver.time0, this.LATITUDE, this.LONGITUDE);
-//			int YEARLEN = NoahMP.getYearLen(Driver.time0.Year);
-//			if (TG < 100)
-//				throw new Exception("");
-//			if (this.SHDMAX > 1 || this.SHDMAX < 0.01 || this.SHDMIN > 1)
-//				throw new Exception("");
-		
-//			NoahMP.NoahMP_SFLX(this, -1, -1, this.LATITUDE, YEARLEN, -1, COSZ,
-//				Driver.DT, Driver.DX, DZ8W, Driver.NSoil, ZSOIL, Driver.NSnow,
-//				FVEG, SHDMAX, VEGTYP, Driver.vegparams.ISURBAN, ICE, IST,
-//				ISC, SMCEQ,
-//				IZ0TLND, SFCTMP, SFCPRS, PSFC, UU, VV, Q2,
-//				QC, SOLDN, LWDN, PRCP, TBOT, CO2AIR,
-//				O2AIR, FOLN, FICEOLD, PBLH, ZLVL,
-//				ref ALBOLD, ref SNEQVO,
-//				STC, SH2O, SMC, ref TAH, ref EAH, ref FWET,
-//				ref CANLIQ, ref CANICE, ref TV, ref TG, ref QSFC, ref QSNOW,
-//				ref ISNOW, ZSNSO, ref SNOWH, ref SNEQV, SNICE, SNLIQ,
-//				ref ZWT, ref WA, ref WT, ref WSLAKE, ref LFMASS, ref RTMASS,
-//				ref STMASS, ref WOOD, ref STBLCP, ref FASTCP, ref LAI, ref SAI,
-//				ref CM, ref CH, ref TAUSS,
-//				ref SMCWTD, ref DEEPRECH, ref RECH,
-//				out FSA, out FSR, out FIRA, out FSH, out SSOIL, out FCEV,
-//				out FGEV, out FCTR, out ECAN, out ETRAN, out EDIR, out TRAD,
-//				out TGB, out TGV, out T2MV, out T2MB, out Q2V, out Q2B,
-//				out RUNSRF, out RUNSUB, out APAR, out PSN, out SAV, out SAG,
-//				out FSNO, out NEE, out GPP, out NPP, out FVEGMP, out ALBEDO,
-//				out QSNBOT, out PONDING, out PONDING1, out PONDING2, out RSSUN, out RSSHA,
-//				out BGAP, out WGAP, out CHV, out CHB, out EMISSI,
-//				out SHG, out SHC, out SHB, out EVG, out EVB, out GHV,
-//				out GHB, out IRG, out IRC, out IRB, out TR, out EVC,
-//				out  CHLEAF, out CHUC, out CHV2, out CHB2, out FPICE,
-//				ref  SFCHEADRT);
-			
-//		}
 		
 		
 		

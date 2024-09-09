@@ -20,7 +20,7 @@ namespace NoahMP
 	/// <summary>
 	/// Description of Driver.
 	/// </summary>
-	public abstract class Driver
+	public class Driver
 	{
 		
 		public static string forcePath;
@@ -46,10 +46,6 @@ namespace NoahMP
 		//public static int NSoil;
 		public static string LUTYPE;
 		public static int LUCATS = 0;
-		/// <summary>
-		/// NoahMP的静态对象
-		/// </summary>
-		
 		public GridCell[,] Cells = null;
 		
 		/// <summary>
@@ -88,15 +84,14 @@ namespace NoahMP
 		public double[,] BIAS = null;
 		
 		public static VEG_PARAMS vegparams = new VEG_PARAMS();
-		public abstract void InitModelCells2();
 		public void InitModelCells()
 		{
-//			Cells = new GridCell[NRows, NCols];
-//			for (int row = 0; row < NRows; row++) {
-//				for (int col = 0; col < NCols; col++) {
-//					Cells[row, col] = new GridCell();
-//				}
-//			}
+			Cells = new GridCell[NRows, NCols];
+			for (int row = 0; row < NRows; row++) {
+				for (int col = 0; col < NCols; col++) {
+					Cells[row, col] = new GridCell();
+				}
+			}
 			
 			HFX = new double[NRows, NCols];
 			GRDFLX = new double[NRows, NCols];
@@ -1813,19 +1808,20 @@ namespace NoahMP
 		/// 0:SingleBox,单点测试模式; 1:Serial multiple box,多点测试模式; 2: Parallel multiple box, 并行模式，有格点输出；3:Parallel multiple box, 并行模式，无格点输出
 		/// </summary>
 		public static int SingleBoxTest = 2;
-		int testRow = 70;
+		int testRow = 42;
 		//93;
-		int testCol = 283;
+		int testCol = 71;
 		//184;
 		/// <summary>
 		/// 汇流模型
 		/// </summary>
 		RiverRouting routing;
-		public void ModifyVegType(){
-			for(int row=0;row<NRows;row++){
-				for(int col=0;col<NCols;col++){
-					if(IVGTYP[row,col]>VEG_PARAMS.MVT)
-						IVGTYP[row,col]=vegparams.ISWATER;
+		public void ModifyVegType()
+		{
+			for (int row = 0; row < NRows; row++) {
+				for (int col = 0; col < NCols; col++) {
+					if (IVGTYP[row, col] > VEG_PARAMS.MVT)
+						IVGTYP[row, col] = vegparams.ISWATER;
 				}
 			}			
 		}
@@ -1844,17 +1840,29 @@ namespace NoahMP
 			} else {
 				throw new Exception("你的wrfinput文件名中必须包含一个土地利用类型标识：'USGS'或'IGBP'，注意二者的差别。");
 			}
+			//下一句是刘永和设计用来调参数的，所以要格外小心
+			//this.TuneParams();
 			this.InitModelCells();
 		}
 		public void RunModel()
-		{			
-			
+		{
 			//初始化汇流模型
 			routing = new RiverRouting();
 			
 			Console.WriteLine("Init the model variables");
-			
-			if (Restart) {					//如果是重启续模拟，则需要从文件读入这些状态变量
+			StreamReader sr = new StreamReader("LastRestart.txt");
+			string filename0 = sr.ReadLine();
+			sr.Close();
+			Console.WriteLine("Do you want to run the model based on the last simulation(" + filename0 + ")? (Y or N):");
+			string key = Console.ReadLine();
+			if (key == "Y" || key == "y") { //以继续上次最后一次模拟
+				string year = filename0.Substring(8, 4);
+				string month = filename0.Substring(12, 2);
+				string day = filename0.Substring(14, 2);
+				string hour = filename0.Substring(16, 2);
+				RestartFile = filename0;
+				time0 = new DateTime(Convert.ToInt32(year), Convert.ToInt32(month), Convert.ToInt32(day), Convert.ToInt32(hour), 0, 0);
+				time0 += timeStep;
 				this.ReadRestart();
 				this.InitRestart();
 				
@@ -1863,9 +1871,23 @@ namespace NoahMP
 				if (File.Exists(routingStatusFile)) {
 					routing.ReadStatus(routingStatusFile);
 				}
-			} else {
-				this.InitXYParameters();
-				this.AssignToCell_NoRestart();
+			} else {			
+				if (Restart) {					//如果是重启续模拟，则需要从文件读入这些状态变量
+					this.ReadRestart();
+					this.InitRestart();
+				
+					this.AssignToCell_Restart();
+					string routingStatusFile = Path.GetFileNameWithoutExtension(RestartFile) + ".bin";
+					if (File.Exists(routingStatusFile)) {
+						routing.ReadStatus(routingStatusFile);
+					}
+					time0 = startTime + timeStep;
+				} else {
+					this.InitXYParameters();
+					this.AssignToCell_NoRestart();
+					time0=startTime;
+				}
+				
 			}
 			
 			for (int row = 0; row < NRows; row++) {
@@ -1878,7 +1900,7 @@ namespace NoahMP
 			}
 			
 			//更新模拟
-			time0 = startTime;
+			//time0 = startTime;
 			for (int i = 0; i < NStep; i++) {
 				if (time0 >= endTime)
 					break;
@@ -2010,17 +2032,17 @@ namespace NoahMP
 							}
 //						if(i>=121)
 //							Console.WriteLine("now");
-							this.RunOneStep(row, col, cell);
-						             	
+							this.RunOneStep(row, col, cell);						             	
 						});
 					}
 				}
+				this.UpdateMatrix();
 				//计算汇流
 				if (NoahMP.OPT_UHG != 0)
 					routing.RunRouting(time0, TOTALRUNOFF);
 				
 				TimeSpan span = time0 - startTime;
-				if (SingleBoxTest!=3 && span.TotalHours % Output_Frequency_Hours == 0) {
+				if (SingleBoxTest != 3 && span.TotalHours % Output_Frequency_Hours == 0) { //这里刚改过，后续需改为0
 					this.WriteOutput();
 				}
 				//输出重启动文件
@@ -2941,7 +2963,7 @@ namespace NoahMP
 							cell.STC[z] = 273;
 						if (cell.STC[z] < 100)
 							cell.STC[z] = 273;
-							//throw new Exception("");
+						//throw new Exception("");
 					}
 					cell.SNEQV = SNOW[row, col];             // SNOW water equivalent [mm]
 					cell.SNOWH = SNOWH[row, col];               // SNOW depth [m]
@@ -3700,13 +3722,8 @@ namespace NoahMP
 		double[,] CHB2XY;
 		double[,] ZLVLXY;
 		
-		//2022年4月29日加，原Noah-MP没有此项。忽略该变量会导致restart后结果与正常执行有差距
-		/// <summary>
-		/// 输出Noah-MP状态
-		/// </summary>
-		public void WriteOutput()
+		public void UpdateMatrix()
 		{
-			
 			for (int I = 0; I < NRows; I++) {
 				for (int J = 0; J < NCols; J++) {
 					GridCell cell = Cells[I, J];
@@ -3844,12 +3861,21 @@ namespace NoahMP
 					//SMCWTDXY[I, J] = cell.SMCWTD;
 				}// ENDDO ILOOP                                                       // of I loop
 			}//  ENDDO JLOOP
+		}
+		
+		/// <summary>
+		/// 输出Noah-MP状态
+		/// </summary>
+		public void WriteOutput()
+		{
+			
+	
 			if (outputPath == null)
 				outputPath = forcePath + "/NoahMP_Output";
 			if (!Directory.Exists(outputPath)) {
 				Directory.CreateDirectory(outputPath);
 			}
-			string filename = outputPath + "/" + time0.Year + time0.Month.ToString("00") + time0.Day.ToString("00") + time0.Hour.ToString("00") + "Output.nc";
+			string filename = outputPath + "/" + time0.Year + time0.Month.ToString("00") + time0.Day.ToString("00") + time0.Hour.ToString("00") + "_Output.nc";
 			
 			int ncid = 0;
 			NC_LowAPI.nc_create(filename, 1, ref ncid);
@@ -4097,6 +4123,10 @@ namespace NoahMP
 					NC_LowAPI.nc_close(ncid);
 				}
 			}
+			//记录下上一次写入盘的文件名
+			StreamWriter sw = new StreamWriter("LastRestart.txt");
+			sw.WriteLine(filename);
+			sw.Close();
 		}
 	}
 }
