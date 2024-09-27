@@ -49,3 +49,5 @@ The content of the namelist.hrldas file:
 There are 13 paramerzations available in the current version. The last one 'HILL-SLOPE Runoff option' is a new added parameterization which is not inherited from the original WRF-Hydro3.0/Noah-MP3.0.
 ![图片](https://github.com/user-attachments/assets/e3c37cf6-9817-43c3-9c98-65e3092d3442)
 
+Run NoahMP.exe. If information is printed out for multiple time steps, it indicates that it has been successfully run, for example:
+![图片](https://github.com/user-attachments/assets/d8144da7-42c4-4f3f-94ce-6691b3232af2)
