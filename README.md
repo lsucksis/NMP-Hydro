@@ -37,3 +37,11 @@ The end of the file name Wrfpinput.d02 should indicate the IGBP or USGS vegetati
 the setting of wrfinput file and the driving data folder:
 ![图片](https://github.com/user-attachments/assets/25e79c8c-8414-45cf-8628-8f65cf807a14)
 
+Driver data requirements:
+
+The driving data is meteorological data that includes 7 variables (wind temperature, humidity, pressure, precipitation, radiation). File every 3 hours. The file name contains time information, such as: 2003010112.LDASIN-DOMAIN1
+Place the weather driver files (every three hours) in the directory pointed to by INDIR. These files can be placed directly in this directory or in a directory named after each year (such as directory 2000, 2001, 2002).
+
+ ![图片](https://github.com/user-attachments/assets/bbab0a52-1b78-4d59-86d3-195210fdace7)
+
+ 
