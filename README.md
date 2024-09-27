@@ -44,4 +44,8 @@ Place the weather driver files (every three hours) in the directory pointed to b
 
  ![图片](https://github.com/user-attachments/assets/bbab0a52-1b78-4d59-86d3-195210fdace7)
 
- 
+The content of the namelist.hrldas file: 
+ ![图片](https://github.com/user-attachments/assets/3a853a4b-c254-4439-9423-d8ddef13db02)
+There are 13 paramerzations available in the current version. The last one 'HILL-SLOPE Runoff option' is a new added parameterization which is not inherited from the original WRF-Hydro3.0/Noah-MP3.0.
+![图片](https://github.com/user-attachments/assets/e3c37cf6-9817-43c3-9c98-65e3092d3442)
+
