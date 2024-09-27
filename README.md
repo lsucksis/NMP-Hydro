@@ -28,6 +28,10 @@ Q_lat=R(nx,ny)×F×1000
 where R(nx,ny) is the runoff (mm, surface + subsurface) simulated by the LSM during the time step, F is the catchment area (km2) contributing water to the current river segment.
 Alternatively, employing weighted assignments from different grid boxes, akin to the method utilized in (Lin et al., 2018), is also a valid approach. However, this method requires the generation of weights from multiple grid boxes. Given the size of each grid box (equivalent to the resolution of meteorological data, typically ranging from 25 km to 100 km), and considering that each grid box can encompass the catchment areas of multiple river segments, the coupling approach using area weighting is unlikely to yield substantial improvements for most river segments. 
 
+## Compiling
+
+NMP-Hydro can be easily compiled in a integerated development environment such as old-version visual studio or Sharpdevelop. Sharpdevelop is recommended. 
+
 ## Usage
 Csharp version Noah-MP configuration and usage instructions: 
 We need to configure the wrfinput file for the simulation area, such as the wrfinput_YellowRiver_0.05_SGBP.nc file, which can be set in the namelist.Hrldas file (see figure below). This is a data file in netcdf format. 
