@@ -27,3 +27,13 @@ Q_lat=R(nx,ny)×F×1000
 
 where R(nx,ny) is the runoff (mm, surface + subsurface) simulated by the LSM during the time step, F is the catchment area (km2) contributing water to the current river segment.
 Alternatively, employing weighted assignments from different grid boxes, akin to the method utilized in (Lin et al., 2018), is also a valid approach. However, this method requires the generation of weights from multiple grid boxes. Given the size of each grid box (equivalent to the resolution of meteorological data, typically ranging from 25 km to 100 km), and considering that each grid box can encompass the catchment areas of multiple river segments, the coupling approach using area weighting is unlikely to yield substantial improvements for most river segments. 
+
+## Usage
+Csharp version Noah-MP configuration and usage instructions: 
+We need to configure the wrfinput file for the simulation area, such as the wrfinput_YellowRiver_0.05_SGBP.nc file, which can be set in the namelist.Hrldas file (see figure below). This is a data file in netcdf format. 
+To prepare the wrfinput file, it is necessary to use WPS's geogrid.exe to generate the geo_ em_ *. nc file, and then use a script with the code nco_stcript_to-create_rfinput_from_geogrid-with_nco_initification. sh to convert and generate it. 
+The end of the file name Wrfpinput.d02 should indicate the IGBP or USGS vegetation classification code.
+
+the setting of wrfinput file and the driving data folder:
+![图片](https://github.com/user-attachments/assets/25e79c8c-8414-45cf-8628-8f65cf807a14)
+
